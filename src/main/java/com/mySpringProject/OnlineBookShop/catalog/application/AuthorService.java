@@ -11,6 +11,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class AuthorService implements AuthorsUseCase {
+
         private final AuthorJpaRepository repository;
 
         @Override

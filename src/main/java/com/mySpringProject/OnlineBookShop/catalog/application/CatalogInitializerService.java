@@ -14,21 +14,24 @@ import com.mySpringProject.OnlineBookShop.order.application.port.ManipulateOrder
 import com.mySpringProject.OnlineBookShop.order.application.port.ManipulateOrderUseCase.PlaceOrderResponse;
 import com.mySpringProject.OnlineBookShop.order.application.port.QueryOrderUseCase;
 import com.mySpringProject.OnlineBookShop.order.domain.Recipient;
-import com.mySpringProject.OnlineBookShop.testing.Comment;
-import com.mySpringProject.OnlineBookShop.testing.Post;
-import com.mySpringProject.OnlineBookShop.testing.PostRepository;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Set;
@@ -45,27 +48,15 @@ class CatalogInitializerService implements CatalogInitializerUseCase {
     private final CatalogUseCase catalog;
     private final RestTemplate restTemplate;
 
-    PostRepository postRepository;
-
     @Override
     @Transactional
     public void initialize() {
         initData();
-//        placeOrder();
+        placeOrder();
     }
 
     private void initData() {
-        log.info("---START---");
-        Post post = new Post(666L, "aaaaa", "bbbbbb");
-        final Comment comment1 = new Comment("AAA some comment");
-        post.addComment (comment1);
-        final Comment comment2 = new Comment("BBB comment");
-        post.addComment(comment2);
-        postRepository.save(post);
-
-
-        log.info("---STOP---");
-        /*try (BufferedReader reader =
+        try (BufferedReader reader =
                      new BufferedReader(new InputStreamReader(new ClassPathResource("books.csv").getInputStream()))) {
             CsvToBean<CsvBook> build = new CsvToBeanBuilder<CsvBook>(reader)
                     .withType(CsvBook.class)
@@ -75,8 +66,7 @@ class CatalogInitializerService implements CatalogInitializerUseCase {
             build.stream().forEach(this::initBook);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to parse CSV file", e);
-        }*/
-
+        }
     }
 
     private void initBook(CsvBook csvBook) {
